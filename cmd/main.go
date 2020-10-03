@@ -17,23 +17,25 @@ const (
 )
 
 func main() {
-	//db, err := database.NewPostgresDB(database.Config{
-	//	Host:     dbHost,
-	//	Port:     dbPort,
-	//	Username: dbUsername,
-	//	Password: dbPassword,
-	//	DBName:   dbName,
-	//	SSLMode:  sslMode,
-	//})
-	//if err != nil{
-	//	logrus.Fatalf("Error connecting to Database: %s", err.Error())
-	//}
-	//
-	//defer db.Close()
-	//
-	//repository := database.NewInvoiceRepository(db)
-	data := database.NewInvoiceRepository()
-	h := handler.NewHandler(data)
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
+	db, err := database.NewPostgresDB(database.Config{
+		Host:     dbHost,
+		Port:     dbPort,
+		Username: dbUsername,
+		Password: dbPassword,
+		DBName:   dbName,
+		SSLMode:  sslMode,
+	})
+	if err != nil{
+		logrus.Fatalf("Error connecting to Database: %s", err.Error())
+	}
+
+	defer db.Close()
+
+	repository := database.NewInvoiceRepository(db)
+
+	h := handler.NewHandler(repository)
 	if err := h.Init(); err != nil {
 		logrus.Printf("Error occurred while running HTTP server: %s", err.Error())
 	}

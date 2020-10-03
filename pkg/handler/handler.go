@@ -21,7 +21,7 @@ func (h *Handler) Init() error {
 	r.POST("/invoice", h.createInvoice)
 	r.GET("/invoice/:id", h.getInvoiceById)
 	r.GET("/invoices", h.getAllInvoices)
-	r.PUT("/invoice/:id", h.getInvoiceById)
+	r.PUT("/invoice/:id", h.updateInvoice)
 	r.DELETE("/invoice/:id", h.deleteInvoice)
 
 	return r.Run(":8080")

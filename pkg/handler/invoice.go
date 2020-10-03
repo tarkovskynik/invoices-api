@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"invoices"
 	"net/http"
 	"strconv"
@@ -15,70 +16,113 @@ func (h *Handler) createInvoice(c *gin.Context) {
 	var input invoices.Invoice
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+		logrus.WithField("handler", "createInvoice").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, errorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
-	h.repo.Create(&input)
+
+	id, err := h.repo.Create(input)
+	if err != nil {
+		logrus.WithField("handler", "createInvoice").Errorf("error: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, errorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": input.Id,
+		"id": id,
 	})
-
-	return
 }
 
 func (h *Handler) getInvoiceById(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-
-	invoice,err := h.repo.Get(id)
-	if err != nil{
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logrus.WithField("handler", "getInvoiceById").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, errorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
+
+	invoice, err := h.repo.GetById(id)
+	if err != nil {
+		logrus.WithField("handler", "getInvoiceById").Errorf("error: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, errorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, invoice)
 }
 
 func (h *Handler) getAllInvoices(c *gin.Context) {
 	invoice, err := h.repo.GetAll()
-	if err != nil{
+	if err != nil {
+		logrus.WithField("handler", "getAllInvoices").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, errorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, invoice)
 }
 
 func (h *Handler) updateInvoice(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-
-	if err != nil{
+	if err != nil {
+		logrus.WithField("handler", "updateInvoice").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, errorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
-	var invoice invoices.Invoice
 
-	h.repo.Update(id,invoice)
+	var invoice invoices.Invoice
+	if err := c.ShouldBindJSON(&invoice); err != nil {
+		logrus.WithField("handler", "updateInvoice").Errorf("error: %s", err.Error())
+		c.JSON(http.StatusBadRequest, errorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	if err := h.repo.Update(id, invoice); err != nil {
+		logrus.WithField("handler", "updateInvoice").Errorf("error: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, errorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": invoice.Id,
+		"status": "ok",
 	})
 }
 
 func (h *Handler) deleteInvoice(c *gin.Context) {
-	id,err := strconv.Atoi(c.Param("id"))
-	if err != nil{
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logrus.WithField("handler", "deleteInvoice").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, errorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
-	h.repo.Delete(id)
-	c.JSON(http.StatusOK, "invoice deleted")
+
+	if err := h.repo.Delete(id); err != nil {
+		logrus.WithField("handler", "deleteInvoice").Errorf("error: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, errorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
 }
