@@ -9,7 +9,7 @@ import (
 
 const (
 	dbHost     = "localhost"
-	dbPort     = "5436"
+	dbPort     = "5432"
 	dbUsername = "postgres"
 	dbPassword = "qwerty"
 	dbName     = "postgres"

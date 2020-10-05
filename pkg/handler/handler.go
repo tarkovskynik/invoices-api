@@ -18,11 +18,17 @@ func NewHandler(repo *database.InvoiceRepository) *Handler {
 func (h *Handler) Init() error {
 	r := gin.New()
 
-	r.POST("/invoice", h.createInvoice)
-	r.GET("/invoice/:id", h.getInvoiceById)
-	r.GET("/invoices", h.getAllInvoices)
-	r.PUT("/invoice/:id", h.updateInvoice)
-	r.DELETE("/invoice/:id", h.deleteInvoice)
+	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
+		"user1": "qwerty",
+		"user2": "asd123",
+		"user3": "asd321",
+	}))
+
+	authorized.POST("/invoice", h.createInvoice)
+	authorized.GET("/invoice/:id", h.getInvoiceById)
+	authorized.GET("/invoices", h.getAllInvoices)
+	authorized.PUT("/invoice/:id", h.updateInvoice)
+	authorized.DELETE("/invoice/:id", h.deleteInvoice)
 
 	return r.Run(":8080")
 }
