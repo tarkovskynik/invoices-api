@@ -5,28 +5,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"invoices/pkg/database"
 	"invoices/pkg/handler"
-)
-
-const (
-	dbHost     = "localhost"
-	dbPort     = "5432"
-	dbUsername = "postgres"
-	dbPassword = "qwerty"
-	dbName     = "postgres"
-	sslMode    = "disable"
+	"os"
 )
 
 func main() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
-	db, err := database.NewPostgresDB(database.Config{
-		Host:     dbHost,
-		Port:     dbPort,
-		Username: dbUsername,
-		Password: dbPassword,
-		DBName:   dbName,
-		SSLMode:  sslMode,
-	})
+	db, err := database.NewPostgresDB(initDBConfig())
 	if err != nil{
 		logrus.Fatalf("Error connecting to Database: %s", err.Error())
 	}
@@ -38,5 +23,46 @@ func main() {
 	h := handler.NewHandler(repository)
 	if err := h.Init(); err != nil {
 		logrus.Printf("Error occurred while running HTTP server: %s", err.Error())
+	}
+}
+
+func initDBConfig() database.Config {
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
+
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "5432"
+	}
+
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		dbPassword = "qwerty"
+	}
+
+	dbUsername := os.Getenv("DB_USERNAME")
+	if dbUsername == "" {
+		dbUsername = "postgres"
+	}
+
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		dbName = "postgres"
+	}
+
+	sslMode := os.Getenv("SSL_MODE")
+	if sslMode == "" {
+		sslMode = "disable"
+	}
+
+	return database.Config{
+		Host:     dbHost,
+		Port:     dbPort,
+		Username: dbUsername,
+		Password: dbPassword,
+		DBName:   dbName,
+		SSLMode:  sslMode,
 	}
 }

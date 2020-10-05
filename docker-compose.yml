@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  invoices-api:
+    build: ./
+    command:  ./invoices-api
+    depends_on:
+      - invoices-db
+    ports:
+      - 8080:8080
+    environment:
+      - "DB_HOST=invoices-db"
+      - "DB_PORT=5432"
+      - "DB_USERNAME=postgres"
+      - "DB_PASSWORD=qwerty"
+      - "DB_NAME=postgres"
+      - "SSL_MODE=disable"
+
+  invoices-db:
+    restart: always
+    image: postgres
+    volumes:
+      - ./.database/postgres/data:/var/lib/postgresql/data
+    environment:
+      - "POSTGRES_PASSWORD=qwerty"
+    ports:
+      - 5432:5432
