@@ -5,7 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"invoices/pkg/database"
 	"invoices/pkg/handler"
-	"io/ioutil"
 	"os"
 )
 
@@ -16,12 +15,6 @@ func main() {
 	if err != nil{
 		logrus.Fatalf("Error connecting to Database: %s", err.Error())
 	}
-
-	conten, err := ioutil.ReadFile("./schema/init.sql")
-	if err != nil{
-		logrus.Fatalf("Error connecting to Database: %s", err.Error())
-	}
-	db.Query(string(conten))
 
 	defer db.Close()
 

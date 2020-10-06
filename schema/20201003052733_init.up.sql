@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS invoices
+CREATE TABLE invoices
 (
     id           serial       not null unique,
     title        varchar(255) not null,
