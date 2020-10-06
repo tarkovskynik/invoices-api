@@ -5,7 +5,12 @@
 - golang-migrate (brew install golang-migrate)
 
 ## Build & Run:
-
 - `make build`
 - `make run`
-- If you are running this app for the first time, use `make migrate` (in new terminal window)
+
+## Authorization:
+In postman you choose type "basic auth"
+
+- Login: user1 Password: qwerty
+- Login: user2 Password: asd123
+- Login: user3 Password: asd321

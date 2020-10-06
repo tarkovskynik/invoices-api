@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/schema/20201003052733_init.down.sql" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/schema/20201003052733_init.up.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/schema/init.sql" dialect="GenericSQL" />
   </component>
 </project>
