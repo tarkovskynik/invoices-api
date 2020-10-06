@@ -1,5 +1,5 @@
-*.iml
 .idea
-target/
-.database
+.data
 .DS_Store
+creds.json
+config.yaml
