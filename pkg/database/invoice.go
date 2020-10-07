@@ -22,7 +22,6 @@ func (r *InvoiceRepository) Create(invoice invoices.Invoice) (int, error) {
 		return 0, err
 	}
 
-
 	return id, nil
 }
 
@@ -47,7 +46,6 @@ func (r *InvoiceRepository) GetAll() ([]invoices.Invoice, error) {
 	return results, nil
 }
 
-
 func (r *InvoiceRepository) GetById(id int) (invoices.Invoice, error) {
 	var invoice invoices.Invoice
 
@@ -68,7 +66,6 @@ func (r *InvoiceRepository) Delete(id int) error {
 	_, err := r.db.Exec("DELETE FROM invoices WHERE id=$1", id)
 	return err
 }
-
 
 func (r *InvoiceRepository) Update(id int, invoice invoices.Invoice) error {
 	_, err := r.db.Exec("UPDATE invoices SET title=$1, description=$2, company_name=$3, date=$4, total_cost=$5 WHERE id=$6",

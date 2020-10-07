@@ -67,16 +67,17 @@ func (h *Handler) getInvoiceById(c *gin.Context) {
 func (h *Handler) getAllInvoices(c *gin.Context) {
 	var invoice []invoices.Invoice
 
-	invoice, err := h.repo.GetAll()
-	if err != nil{
-	invoice, err = h.repo.GetAll()
+	invoice, err := h.cache.GetAllCache()
 	if err != nil {
-		logrus.WithField("handler", "getAllInvoices").Errorf("error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, errorResponse{
-			Error: err.Error(),
-		})
-		return
-	}}
+		invoice, err = h.repo.GetAll()
+		if err != nil {
+			logrus.WithField("handler", "getAllInvoices").Errorf("error: %s", err.Error())
+			c.JSON(http.StatusBadRequest, errorResponse{
+				Error: err.Error(),
+			})
+			return
+		}
+	}
 	c.JSON(http.StatusOK, invoice)
 }
 
@@ -107,7 +108,7 @@ func (h *Handler) updateInvoice(c *gin.Context) {
 		return
 	}
 
-	h.cache.Update(id,invoice)
+	h.cache.UpdateCache(id, invoice)
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"status": "ok",
@@ -131,7 +132,7 @@ func (h *Handler) deleteInvoice(c *gin.Context) {
 		})
 		return
 	}
-	h.cache.Delete(id)
+	h.cache.DeleteCache(id)
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"status": "ok",

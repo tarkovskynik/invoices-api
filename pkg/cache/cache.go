@@ -9,7 +9,6 @@ import (
 type Cache struct {
 	data map[int]invoices.Invoice
 	sync.Mutex
-
 }
 
 func NewCache() *Cache {
@@ -18,44 +17,44 @@ func NewCache() *Cache {
 	}
 }
 
-func (c *Cache) CreateCache(inv *invoices.Invoice){
+func (c *Cache) CreateCache(inv *invoices.Invoice) {
 	c.Lock()
 	c.data[inv.Id] = *inv
 	c.Unlock()
 }
 
-func (c *Cache) GetCache(id int) (invoices.Invoice, error){
+func (c *Cache) GetCache(id int) (invoices.Invoice, error) {
 	c.Lock()
 	defer c.Unlock()
 
-	invoice,ok := c.data[id]
+	invoice, ok := c.data[id]
 
 	if !ok {
 		return invoice, errors.New("invoice not found")
 	}
 
-	return invoice,nil
+	return invoice, nil
 }
 
-func (c *Cache) GetAll() ([]invoices.Invoice, error) {
+func (c *Cache) GetAllCache() ([]invoices.Invoice, error) {
 	var result []invoices.Invoice
 	c.Lock()
 	defer c.Unlock()
 	inv := c.data
 
-	for _,value := range inv{
-		result = append(result,value)
+	for _, value := range inv {
+		result = append(result, value)
 	}
-	return result,nil
+	return result, nil
 }
 
-func (c *Cache) Update(id int, inv invoices.Invoice){
+func (c *Cache) UpdateCache(id int, inv invoices.Invoice) {
 	c.Lock()
 	c.data[id] = inv
 	c.Unlock()
 }
 
-func (c *Cache) Delete(id int){
+func (c *Cache) DeleteCache(id int) {
 	c.Lock()
 	defer c.Unlock()
 	delete(c.data, id)

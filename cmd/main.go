@@ -14,7 +14,7 @@ func main() {
 
 	db, err := database.NewPostgresDB(initDBConfig())
 
-	if err != nil{
+	if err != nil {
 		logrus.Fatalf("Error connecting to Database: %s", err.Error())
 	}
 	defer db.Close()
@@ -22,7 +22,7 @@ func main() {
 	repository := database.NewInvoiceRepository(db)
 	caching := cache.NewCache()
 
-	h := handler.NewHandler(repository,caching)
+	h := handler.NewHandler(repository, caching)
 	if err := h.Init(); err != nil {
 		logrus.Printf("Error occurred while running HTTP server: %s", err.Error())
 	}

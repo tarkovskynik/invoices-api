@@ -2,18 +2,18 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"invoices/pkg/database"
 	"invoices/pkg/cache"
+	"invoices/pkg/database"
 )
 
 type Handler struct {
-	repo *database.InvoiceRepository
+	repo  *database.InvoiceRepository
 	cache *cache.Cache
 }
 
 func NewHandler(repo *database.InvoiceRepository, cache *cache.Cache) *Handler {
 	return &Handler{
-		repo: repo,
+		repo:  repo,
 		cache: cache,
 	}
 
