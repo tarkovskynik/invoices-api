@@ -36,20 +36,9 @@ func (c *Cache) GetCache(id int) (invoices.Invoice, error) {
 	return invoice, nil
 }
 
-func (c *Cache) GetAllCache() ([]invoices.Invoice, error) {
-	var result []invoices.Invoice
-	c.Lock()
-	defer c.Unlock()
-	inv := c.data
-
-	for _, value := range inv {
-		result = append(result, value)
-	}
-	return result, nil
-}
-
 func (c *Cache) UpdateCache(id int, inv invoices.Invoice) {
 	c.Lock()
+	inv.Id = id
 	c.data[id] = inv
 	c.Unlock()
 }

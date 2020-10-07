@@ -65,19 +65,16 @@ func (h *Handler) getInvoiceById(c *gin.Context) {
 }
 
 func (h *Handler) getAllInvoices(c *gin.Context) {
-	var invoice []invoices.Invoice
 
-	invoice, err := h.cache.GetAllCache()
+	invoice, err := h.repo.GetAll()
 	if err != nil {
-		invoice, err = h.repo.GetAll()
-		if err != nil {
-			logrus.WithField("handler", "getAllInvoices").Errorf("error: %s", err.Error())
-			c.JSON(http.StatusBadRequest, errorResponse{
-				Error: err.Error(),
-			})
-			return
-		}
+		logrus.WithField("handler", "getAllInvoices").Errorf("error: %s", err.Error())
+		c.JSON(http.StatusBadRequest, errorResponse{
+			Error: err.Error(),
+		})
+		return
 	}
+
 	c.JSON(http.StatusOK, invoice)
 }
 
