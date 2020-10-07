@@ -24,6 +24,8 @@ func (h *Handler) createInvoice(c *gin.Context) {
 	}
 
 	id, err := h.repo.Create(input)
+	h.cache.CreateCache(&input)
+
 	if err != nil {
 		logrus.WithField("handler", "createInvoice").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, errorResponse{
@@ -39,6 +41,7 @@ func (h *Handler) createInvoice(c *gin.Context) {
 
 func (h *Handler) getInvoiceById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
+	var invoice invoices.Invoice
 	if err != nil {
 		logrus.WithField("handler", "getInvoiceById").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, errorResponse{
@@ -46,29 +49,34 @@ func (h *Handler) getInvoiceById(c *gin.Context) {
 		})
 		return
 	}
-
-	invoice, err := h.repo.GetById(id)
+	invoice, err = h.cache.GetCache(id)
 	if err != nil {
-		logrus.WithField("handler", "getInvoiceById").Errorf("error: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, errorResponse{
-			Error: err.Error(),
-		})
-		return
+		invoice, err = h.repo.GetById(id)
+		if err != nil {
+			logrus.WithField("handler", "getInvoiceById").Errorf("error: %s", err.Error())
+			c.JSON(http.StatusInternalServerError, errorResponse{
+				Error: err.Error(),
+			})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, invoice)
 }
 
 func (h *Handler) getAllInvoices(c *gin.Context) {
+	var invoice []invoices.Invoice
+
 	invoice, err := h.repo.GetAll()
+	if err != nil{
+	invoice, err = h.repo.GetAll()
 	if err != nil {
 		logrus.WithField("handler", "getAllInvoices").Errorf("error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, errorResponse{
 			Error: err.Error(),
 		})
 		return
-	}
-
+	}}
 	c.JSON(http.StatusOK, invoice)
 }
 
@@ -99,6 +107,8 @@ func (h *Handler) updateInvoice(c *gin.Context) {
 		return
 	}
 
+	h.cache.Update(id,invoice)
+
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"status": "ok",
 	})
@@ -121,6 +131,7 @@ func (h *Handler) deleteInvoice(c *gin.Context) {
 		})
 		return
 	}
+	h.cache.Delete(id)
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"status": "ok",

@@ -3,6 +3,7 @@ package main
 import (
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	"invoices/pkg/cache"
 	"invoices/pkg/database"
 	"invoices/pkg/handler"
 	"os"
@@ -12,15 +13,16 @@ func main() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	db, err := database.NewPostgresDB(initDBConfig())
+
 	if err != nil{
 		logrus.Fatalf("Error connecting to Database: %s", err.Error())
 	}
-
 	defer db.Close()
 
 	repository := database.NewInvoiceRepository(db)
+	caching := cache.NewCache()
 
-	h := handler.NewHandler(repository)
+	h := handler.NewHandler(repository,caching)
 	if err := h.Init(); err != nil {
 		logrus.Printf("Error occurred while running HTTP server: %s", err.Error())
 	}

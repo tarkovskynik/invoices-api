@@ -22,6 +22,7 @@ func (r *InvoiceRepository) Create(invoice invoices.Invoice) (int, error) {
 		return 0, err
 	}
 
+
 	return id, nil
 }
 

@@ -7,8 +7,6 @@ import (
 )
 
 type Cache struct {
-	//db *sql.DB
-	counter int
 	data map[int]invoices.Invoice
 	sync.Mutex
 
@@ -17,20 +15,16 @@ type Cache struct {
 func NewCache() *Cache {
 	return &Cache{
 		data: make(map[int]invoices.Invoice),
-		counter: 1,
 	}
 }
 
-func (c *Cache) Create(inv *invoices.Invoice){
-	//row := c.db.QueryRow()
+func (c *Cache) CreateCache(inv *invoices.Invoice){
 	c.Lock()
-	inv.Id = c.counter
 	c.data[inv.Id] = *inv
-	c.counter ++
 	c.Unlock()
 }
 
-func (c *Cache) Get(id int) (invoices.Invoice, error){
+func (c *Cache) GetCache(id int) (invoices.Invoice, error){
 	c.Lock()
 	defer c.Unlock()
 
