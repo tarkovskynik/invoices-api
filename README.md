@@ -13,7 +13,7 @@ Use this command in the directory
 - If you are running this app for the first time, use `make migrate` in a new terminal window
 
 ## Authorization:
-In postman you choose "Authorization" menu, type "basic auth"
+In Postman you choose "Authorization" menu, type "basic auth"
 
 - Login: admin   Password: qwerty
 
@@ -28,7 +28,7 @@ PUT "/invoice/:id" - update invoice by id
 
 DELETE "/invoice/:id" - delete invoice by id
 
-## Exaple of creating an invoice:
+## Example of creating an invoice:
 In Postman you choose "Body" menu, POST `localhost:8080/invoice` and type for example:
 
 {  
